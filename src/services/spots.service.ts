@@ -3,7 +3,7 @@ import { Service } from 'typedi';
 import pg from '@database';
 import { HttpException } from '@exceptions/httpException';
 import { Spot } from '@/interfaces/spots.interface';
-//import { Like } from '@/interfaces/likes.interface';
+import { Like } from '@/interfaces/likes.interface';
 
 @Service()
 export class SpotService {

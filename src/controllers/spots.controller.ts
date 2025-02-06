@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Container } from 'typedi';
 import { SpotService } from '@services/spots.service';
 import { Spot } from '@interfaces/spots.interface';
+import { Like } from '@interfaces/likes.interface';
 
 export class SpotController {
   public spot = Container.get(SpotService);
@@ -40,6 +41,28 @@ export class SpotController {
       const spotId = Number(req.params.id);
       await this.spot.deleteSpot(spotId);
       res.status(200).json({ message: 'deleted' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public addSpotLike = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const spotId = Number(req.params.id);
+      //const userId = req.user.id;
+      const userId = 1;
+      const likeData: Like = await this.spot.addSpotLike(spotId, userId);
+      res.status(201).json({ data: likeData, message: 'created' });
+    } catch (error) {
+      next(error);
+    }
+  };  
+
+  public getSpotLikes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const spotId = Number(req.params.id);
+      const likesData: Like[] = await this.spot.getSpotLikes(spotId);
+      res.status(200).json({ data: likesData, message: 'findAll' });
     } catch (error) {
       next(error);
     }

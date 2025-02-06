@@ -25,3 +25,4 @@ export class CreateSpotDto {
   @IsNumber()
   public longitude: number;
 } 
+
