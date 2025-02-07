@@ -2,8 +2,7 @@ import { hash } from 'bcrypt';
 import { Service } from 'typedi';
 import pg from '@database';
 import { HttpException } from '@exceptions/httpException';
-import { Spot } from '@/interfaces/spots.interface';
-import { Like } from '@/interfaces/likes.interface';
+import { Spot, SpotLike } from '@/interfaces/spots.interface';
 
 @Service()
 export class SpotService {
@@ -62,7 +61,7 @@ export class SpotService {
     return rows[0];
   }
 
-  public async getSpotLikes(spotId: number): Promise<Like[]> {
+  public async findAllSpotLikes(spotId: number): Promise<SpotLike[]> {
     const { rows } = await pg.query(`
       SELECT * FROM likes WHERE spot_id = $1
     `, [spotId]);
@@ -70,7 +69,7 @@ export class SpotService {
     return rows;
   }
 
-  public async addSpotLike(spotId: number, userId: number): Promise<Like> {
+  public async addSpotLike(spotId: number, userId: number): Promise<SpotLike> {
     const { rows } = await pg.query(`
       INSERT INTO likes (user_id, spot_id)
       VALUES ($1, $2)

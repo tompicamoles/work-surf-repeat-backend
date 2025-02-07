@@ -15,3 +15,9 @@ export interface Spot {
   timezone: string;
   life_cost: number;
 }
+
+export interface SpotLike {
+  id: number;
+  user_id: number;
+  spot_id: number;
+} 
