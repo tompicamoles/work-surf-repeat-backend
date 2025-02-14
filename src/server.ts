@@ -8,5 +8,14 @@ ValidateEnv();
 
 const app = new App([new AuthRoute(), new UserRoute(), new SpotRoute(), new WorkPlacesRoute()]);
 
-app.listen();
+process.on('uncaughtException', (error: Error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
 
+process.on('unhandledRejection', (error: Error) => {
+  console.error('Unhandled Rejection:', error);
+  process.exit(1);
+});
+
+app.listen();

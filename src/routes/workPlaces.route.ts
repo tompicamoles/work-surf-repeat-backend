@@ -22,6 +22,5 @@ export class WorkPlacesRoute implements Routes {
     this.router.post(`${this.path}/:id(\\d+)/ratings`, ValidationMiddleware(CreateWorkPlaceRatingDto), this.workPlace.createWorkPlaceRating);
     this.router.put(`${this.path}/:id(\\d+)/ratings`, ValidationMiddleware(CreateWorkPlaceRatingDto), this.workPlace.updateWorkPlaceRating);
     this.router.delete(`${this.path}/:id(\\d+)/ratings`, this.workPlace.deleteWorkPlaceRating);
-
   }
-  }
+}

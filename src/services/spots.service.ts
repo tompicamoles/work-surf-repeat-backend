@@ -1,4 +1,3 @@
-import { hash } from 'bcrypt';
 import { Service } from 'typedi';
 import pg from '@database';
 import { HttpException } from '@exceptions/httpException';
@@ -23,7 +22,8 @@ export class SpotService {
   }
 
   public async findSpotById(spotId: number): Promise<Spot> {
-    const { rows, rowCount } = await pg.query(`
+    const { rows, rowCount } = await pg.query(
+      `
       SELECT spots.*,
              countries.name as country_name,
              countries.code as country_code,
@@ -35,7 +35,9 @@ export class SpotService {
       FROM spots
       LEFT JOIN countries ON spots.country_id = countries.id
       WHERE spots.id = $1
-    `, [spotId]);
+    `,
+      [spotId],
+    );
 
     if (!rowCount) throw new HttpException(409, "Spot doesn't exist");
     return rows[0];
@@ -43,8 +45,9 @@ export class SpotService {
 
   public async createSpot(spotData: Partial<Spot>): Promise<Spot> {
     const { name, country_id, image_link, has_coworking, has_coliving, latitude, longitude } = spotData;
-    
-    const { rows } = await pg.query(`
+
+    const { rows } = await pg.query(
+      `
       INSERT INTO spots (
         name, 
         country_id, 
@@ -56,34 +59,45 @@ export class SpotService {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
-    `, [name, country_id, image_link, has_coworking, has_coliving, latitude, longitude]);
+    `,
+      [name, country_id, image_link, has_coworking, has_coliving, latitude, longitude],
+    );
 
     return rows[0];
   }
 
   public async findAllSpotLikes(spotId: number): Promise<SpotLike[]> {
-    const { rows } = await pg.query(`
+    const { rows } = await pg.query(
+      `
       SELECT * FROM likes WHERE spot_id = $1
-    `, [spotId]);
-    
+    `,
+      [spotId],
+    );
+
     return rows;
   }
 
   public async addSpotLike(spotId: number, userId: number): Promise<SpotLike> {
-    const { rows } = await pg.query(`
+    const { rows } = await pg.query(
+      `
       INSERT INTO likes (user_id, spot_id)
       VALUES ($1, $2)
       RETURNING *
-    `, [userId, spotId]);
+    `,
+      [userId, spotId],
+    );
 
     return rows[0];
   }
 
   public async deleteSpot(spotId: number): Promise<void> {
-    const { rowCount } = await pg.query(`
+    const { rowCount } = await pg.query(
+      `
       DELETE FROM spots
       WHERE id = $1
-    `, [spotId]);
+    `,
+      [spotId],
+    );
 
     if (!rowCount) throw new HttpException(409, "Spot doesn't exist");
   }

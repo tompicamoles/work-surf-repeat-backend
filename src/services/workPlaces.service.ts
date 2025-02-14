@@ -18,7 +18,8 @@ export class WorkPlacesService {
   }
 
   public async findWorkPlaceById(workPlaceId: number): Promise<WorkPlace> {
-    const { rows } = await pg.query(`
+    const { rows } = await pg.query(
+      `
       SELECT 
         work_places.*,
         AVG(ratings.rating) as rating
@@ -27,14 +28,17 @@ export class WorkPlacesService {
       LEFT JOIN 
         ratings ON work_places.id = ratings.work_place_id
       WHERE work_places.id = $1
-      GROUP BY work_places.id`, [workPlaceId]);
+      GROUP BY work_places.id`,
+      [workPlaceId],
+    );
     if (!rows.length) throw new HttpException(404, "WorkPlace doesn't exist");
 
     return rows[0];
   }
 
   public async findWorkPlacesBySpotId(spotId: number): Promise<WorkPlace[]> {
-    const { rows } = await pg.query(`
+    const { rows } = await pg.query(
+      `
       SELECT 
         work_places.*,
         AVG(ratings.rating) as rating
@@ -43,7 +47,9 @@ export class WorkPlacesService {
       LEFT JOIN 
         ratings ON work_places.id = ratings.work_place_id
       WHERE work_places.spot_id = $1
-      GROUP BY work_places.id`, [spotId]);
+      GROUP BY work_places.id`,
+      [spotId],
+    );
     return rows;
   }
 
@@ -82,12 +88,20 @@ export class WorkPlacesService {
   }
 
   public async createWorkPlaceRating(workPlaceId: number, userId: number, workPlaceRatingData: CreateWorkPlaceRatingDto): Promise<WorkPlaceRating> {
-    const { rows } = await pg.query('INSERT INTO ratings (work_place_id, user_id, rating) VALUES ($1, $2, $3) RETURNING *', [workPlaceId, userId, workPlaceRatingData.rating]);
+    const { rows } = await pg.query('INSERT INTO ratings (work_place_id, user_id, rating) VALUES ($1, $2, $3) RETURNING *', [
+      workPlaceId,
+      userId,
+      workPlaceRatingData.rating,
+    ]);
     return rows[0];
   }
 
   public async updateWorkPlaceRating(workPlaceId: number, userId: number, workPlaceRatingData: CreateWorkPlaceRatingDto): Promise<WorkPlaceRating> {
-    const { rows } = await pg.query('UPDATE ratings SET rating = $1 WHERE work_place_id = $2 AND user_id = $3 RETURNING *', [workPlaceRatingData.rating, workPlaceId, userId]);
+    const { rows } = await pg.query('UPDATE ratings SET rating = $1 WHERE work_place_id = $2 AND user_id = $3 RETURNING *', [
+      workPlaceRatingData.rating,
+      workPlaceId,
+      userId,
+    ]);
     return rows[0];
   }
 
@@ -95,4 +109,4 @@ export class WorkPlacesService {
     const { rows } = await pg.query('DELETE FROM ratings WHERE work_place_id = $1 AND user_id = $2 RETURNING *', [workPlaceId, userId]);
     return rows[0];
   }
-} 
+}

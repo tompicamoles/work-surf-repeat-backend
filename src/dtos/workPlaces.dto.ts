@@ -36,4 +36,4 @@ export class CreateWorkPlaceRatingDto {
   @Max(5)
   @IsNotEmpty()
   public rating: number;
-} 
+}

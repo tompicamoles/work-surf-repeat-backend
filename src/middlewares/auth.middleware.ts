@@ -21,7 +21,8 @@ export const AuthMiddleware = async (req: RequestWithUser, res: Response, next: 
 
     if (Authorization) {
       const { id } = (await verify(Authorization, SECRET_KEY)) as DataStoredInToken;
-      const { rows, rowCount } = await pg.query(`
+      const { rows, rowCount } = await pg.query(
+        `
         SELECT
           "email",
           "password"
@@ -29,7 +30,9 @@ export const AuthMiddleware = async (req: RequestWithUser, res: Response, next: 
           users
         WHERE
           "id" = $1
-      `, [id]);
+      `,
+        [id],
+      );
 
       if (rowCount) {
         req.user = rows[0];
