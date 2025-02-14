@@ -7,9 +7,11 @@ import { DataStoredInToken, RequestWithUser } from '@interfaces/auth.interface';
 
 const getAuthorization = req => {
   const cookie = req.cookies['Authorization'];
+  if (cookie) console.log('cookie', cookie);
   if (cookie) return cookie;
 
   const header = req.header('Authorization');
+  if (header) console.log(header);
   if (header) return header.split('Bearer ')[1];
 
   return null;
@@ -28,9 +30,9 @@ export const apiKeyMiddleware = (req: Request, res: Response, next: NextFunction
 export const AuthMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const Authorization = getAuthorization(req);
-
     if (Authorization) {
       const { id } = (await verify(Authorization, SECRET_KEY)) as DataStoredInToken;
+      console.log('id', id);
       const { rows, rowCount } = await pg.query(
         `
         SELECT

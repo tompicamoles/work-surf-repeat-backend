@@ -45,7 +45,13 @@ export class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
+    this.app.use(
+      cors({
+        origin: [process.env.ORIGIN, 'http://localhost:3000'],
+        credentials: CREDENTIALS,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      }),
+    );
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());

@@ -20,39 +20,39 @@ const createCookie = (tokenData: TokenData): string => {
 
 @Service()
 export class AuthService {
-  public async signup(userData: User): Promise<User> {
-    const { email, password } = userData;
+  // public async signup(userData: User): Promise<User> {
+  //   const { email, password } = userData;
 
-    const { rows: findUser } = await pg.query(
-      `
-    SELECT EXISTS(
-      SELECT
-        "email"
-      FROM
-        users
-      WHERE
-        "email" = $1
-    )`,
-      [email],
-    );
-    if (findUser[0].exists) throw new HttpException(409, `This email ${userData.email} already exists`);
+  //   const { rows: findUser } = await pg.query(
+  //     `
+  //   SELECT EXISTS(
+  //     SELECT
+  //       "email"
+  //     FROM
+  //       users
+  //     WHERE
+  //       "email" = $1
+  //   )`,
+  //     [email],
+  //   );
+  //   if (findUser[0].exists) throw new HttpException(409, `This email ${userData.email} already exists`);
 
-    const hashedPassword = await hash(password, 10);
-    const { rows: signUpUserData } = await pg.query(
-      `
-      INSERT INTO
-        users(
-          "email",
-          "password"
-        )
-      VALUES ($1, $2)
-      RETURNING "email", "password"
-      `,
-      [email, hashedPassword],
-    );
+  //   const hashedPassword = await hash(password, 10);
+  //   const { rows: signUpUserData } = await pg.query(
+  //     `
+  //     INSERT INTO
+  //       users(
+  //         "email",
+  //         "password"
+  //       )
+  //     VALUES ($1, $2)
+  //     RETURNING "email", "password"
+  //     `,
+  //     [email, hashedPassword],
+  //   );
 
-    return signUpUserData[0];
-  }
+  //   return signUpUserData[0];
+  // }
 
   public async login(userData: User): Promise<{ cookie: string; findUser: User }> {
     const { email, password } = userData;
@@ -60,8 +60,10 @@ export class AuthService {
     const { rows, rowCount } = await pg.query(
       `
       SELECT
+        "id",
         "email",
-        "password"
+        "password",
+        "name"
       FROM
         users
       WHERE

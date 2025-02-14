@@ -34,7 +34,7 @@ export class UserService {
   }
 
   public async createUser(userData: User): Promise<User> {
-    const { email, password } = userData;
+    const { email, password, name } = userData;
 
     const { rows } = await pg.query(
       `
@@ -56,12 +56,13 @@ export class UserService {
       INSERT INTO
         users(
           "email",
-          "password"
+          "password",
+          "name"
         )
-      VALUES ($1, $2)
-      RETURNING "email", "password"
+      VALUES ($1, $2, $3)
+      RETURNING "email", "password", "name"
       `,
-      [email, hashedPassword],
+      [email, hashedPassword, name],
     );
 
     return createUserData[0];
