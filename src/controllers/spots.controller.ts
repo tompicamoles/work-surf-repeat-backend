@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Container } from 'typedi';
 import { SpotService } from '@services/spots.service';
 import { Spot, SpotLike } from '@interfaces/spots.interface';
+import { RequestWithUser } from '@interfaces/auth.interface';
 
 export class SpotController {
   public spot = Container.get(SpotService);
@@ -45,11 +46,11 @@ export class SpotController {
     }
   };
 
-  public addSpotLike = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public addSpotLike = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const spotId = Number(req.params.id);
-      //const userId = Number(req.body.userId);
-      const userId = 1;
+      const userId = req.user.id;
+      console.log('userId lol', userId);
       const createLikeData: SpotLike = await this.spot.addSpotLike(spotId, userId);
       res.status(201).json({ data: createLikeData, message: 'created' });
     } catch (error) {

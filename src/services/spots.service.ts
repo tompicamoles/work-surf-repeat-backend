@@ -16,7 +16,7 @@ export class SpotService {
                countries.timezone,
                countries.life_cost
         FROM spots
-        LEFT JOIN countries ON spots.country_id = countries.id
+        LEFT JOIN countries ON spots.country = countries.name
     `);
     return rows;
   }
@@ -33,7 +33,7 @@ export class SpotService {
              countries.timezone,
              countries.life_cost
       FROM spots
-      LEFT JOIN countries ON spots.country_id = countries.id
+      LEFT JOIN countries ON spots.country = countries.name
       WHERE spots.id = $1
     `,
       [spotId],

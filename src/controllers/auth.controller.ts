@@ -3,14 +3,15 @@ import { Container } from 'typedi';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import { AuthService } from '@services/auth.service';
-
+import { UserService } from '@services/users.service';
 export class AuthController {
   public auth = Container.get(AuthService);
+  public user = Container.get(UserService);
 
   public signUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userData: User = req.body;
-      const signUpUserData: User = await this.auth.signup(userData);
+      const signUpUserData: User = await this.user.createUser(userData);
 
       res.status(201).json({ data: signUpUserData, message: 'signup' });
     } catch (error) {
@@ -37,6 +38,16 @@ export class AuthController {
 
       res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);
       res.status(200).json({ data: logOutUserData, message: 'logout' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public checkAuth = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userData: User = req.user;
+      console.log(userData);
+      res.status(200).json({ data: userData, message: 'authenticated' });
     } catch (error) {
       next(error);
     }
