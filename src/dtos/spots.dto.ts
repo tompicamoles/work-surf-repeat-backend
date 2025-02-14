@@ -24,15 +24,14 @@ export class CreateSpotDto {
 
   @IsNumber()
   public longitude: number;
-} 
+}
 
 export class CreateSpotLikeDto {
-    @IsNumber()
-    @IsNotEmpty()
-    public user_id: number;
-  
-    @IsNumber()
-    @IsNotEmpty()
-    public spot_id: number;
-  }
+  @IsNumber()
+  @IsNotEmpty()
+  public user_id: number;
 
+  @IsNumber()
+  @IsNotEmpty()
+  public spot_id: number;
+}

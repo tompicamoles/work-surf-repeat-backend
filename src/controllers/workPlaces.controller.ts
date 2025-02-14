@@ -75,7 +75,7 @@ export class WorkPlacesController {
     } catch (error) {
       next(error);
     }
-  };  
+  };
 
   public updateWorkPlaceRating = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -87,7 +87,7 @@ export class WorkPlacesController {
     } catch (error) {
       next(error);
     }
-  }; 
+  };
 
   public deleteWorkPlaceRating = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,5 +100,4 @@ export class WorkPlacesController {
       next(error);
     }
   };
-
-} 
+}

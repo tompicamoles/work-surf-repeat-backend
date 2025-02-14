@@ -20,4 +20,4 @@ export interface SpotLike {
   id: number;
   user_id: number;
   spot_id: number;
-} 
+}
