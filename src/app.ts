@@ -12,6 +12,7 @@ import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
 import { Routes } from '@interfaces/routes.interface';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import { apiKeyMiddleware } from '@middlewares/auth.middleware';
 
 export class App {
   public app: express.Application;
@@ -51,6 +52,7 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use(apiKeyMiddleware);
   }
 
   private initializeRoutes(routes: Routes[]) {

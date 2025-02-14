@@ -1,4 +1,4 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 import { verify } from 'jsonwebtoken';
 import { SECRET_KEY } from '@config';
 import pg from '@database';
@@ -13,6 +13,16 @@ const getAuthorization = req => {
   if (header) return header.split('Bearer ')[1];
 
   return null;
+};
+
+export const apiKeyMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const apiKey = req.headers['x-api-key'];
+
+  if (!apiKey || apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ message: 'Unauthorized - Invalid API Key' });
+  }
+
+  next();
 };
 
 export const AuthMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
