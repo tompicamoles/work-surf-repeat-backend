@@ -8,9 +8,33 @@ export class SpotController {
   public spot = Container.get(SpotService);
 
   public getSpots = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    //filters
+    console.log(req.query, 'req.query');
+    const {
+      lifeCost,
+      country,
+      wifiQuality,
+      hasCoworking,
+      hasColiving,
+    }: {
+      lifeCost?: number;
+      country?: string;
+      wifiQuality?: number;
+      hasCoworking?: boolean;
+      hasColiving?: boolean;
+    } = req.query;
+
+    console.log(lifeCost, 'lifeCost');
+    console.log(req.body, 'req.body');
     try {
-      const findAllSpotsData: Spot[] = await this.spot.findAllSpot();
-      res.status(200).json({ data: findAllSpotsData, message: 'findAll' });
+      const findAllSpotsData: Spot[] = await this.spot.findAllSpot({
+        lifeCost,
+        country,
+        wifiQuality,
+        hasCoworking,
+        hasColiving,
+      });
+      res.status(200).json(findAllSpotsData);
     } catch (error) {
       next(error);
     }
@@ -50,9 +74,15 @@ export class SpotController {
     try {
       const spotId = Number(req.params.id);
       const userId = req.user.id;
-      console.log('userId lol', userId);
-      const createLikeData: SpotLike = await this.spot.addSpotLike(spotId, userId);
-      res.status(201).json({ data: createLikeData, message: 'created' });
+
+      const userAlreadyLiked = await this.spot.getSpotLike(userId, spotId);
+      if (userAlreadyLiked) {
+        await this.spot.deleteSpotLike(spotId, userId);
+        res.status(200).json({ message: 'like deleted', userId, spotId });
+      } else {
+        await this.spot.addSpotLike(spotId, userId);
+        res.status(201).json({ message: 'like created', userId, spotId });
+      }
     } catch (error) {
       next(error);
     }
