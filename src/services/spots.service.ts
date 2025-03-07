@@ -5,19 +5,63 @@ import { Spot, SpotLike } from '@/interfaces/spots.interface';
 
 @Service()
 export class SpotService {
-  public async findAllSpot(): Promise<Spot[]> {
-    const { rows } = await pg.query(`
-    SELECT spots.*,
-               countries.name as country_name,
-               countries.code as country_code,
-               countries.continent,
-               countries.surf_season,
-               countries.good_weather_season,
-               countries.timezone,
-               countries.life_cost
-        FROM spots
-        LEFT JOIN countries ON spots.country = countries.name
-    `);
+  public async findAllSpot(filters?: {
+    lifeCost?: number;
+    country?: string;
+    wifiQuality?: number;
+    hasCoworking?: boolean;
+    hasColiving?: boolean;
+  }): Promise<Spot[]> {
+    let query = `
+      SELECT spots.*,
+             countries.name as country_name,
+             countries.code as country_code,
+             countries.continent,
+             countries.surf_season,
+             countries.good_weather_season,
+             countries.timezone,
+             countries.life_cost
+      FROM spots
+      LEFT JOIN countries ON spots.country = countries.name
+    `;
+
+    const conditions = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (filters) {
+      if (filters.lifeCost !== undefined) {
+        conditions.push(`countries.life_cost <= $${paramCount}`);
+        values.push(filters.lifeCost);
+        paramCount++;
+      }
+
+      if (filters.country !== undefined) {
+        conditions.push(`spots.country = $${paramCount}`);
+        values.push(filters.country);
+        paramCount++;
+      }
+
+      if (filters.wifiQuality !== undefined) {
+        conditions.push(`spots.wifi_quality >= $${paramCount}`);
+        values.push(filters.wifiQuality);
+        paramCount++;
+      }
+
+      if (filters.hasCoworking === true) {
+        conditions.push(`spots.has_coworking = true`);
+      }
+
+      if (filters.hasColiving === true) {
+        conditions.push(`spots.has_coliving = true`);
+      }
+
+      if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(' AND ')}`;
+      }
+    }
+
+    const { rows } = await pg.query(query, values);
     return rows;
   }
 

@@ -8,8 +8,16 @@ export class SpotController {
   public spot = Container.get(SpotService);
 
   public getSpots = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    //filters
+    const { lifeCost, country, wifiQuality, hasCoworking, hasColiving } = req.body;
     try {
-      const findAllSpotsData: Spot[] = await this.spot.findAllSpot();
+      const findAllSpotsData: Spot[] = await this.spot.findAllSpot({
+        lifeCost,
+        country,
+        wifiQuality,
+        hasCoworking,
+        hasColiving,
+      });
       res.status(200).json({ data: findAllSpotsData, message: 'findAll' });
     } catch (error) {
       next(error);
