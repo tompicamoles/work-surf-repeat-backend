@@ -2,10 +2,12 @@ import { IsString, IsNumber, IsBoolean, IsOptional, IsNotEmpty } from 'class-val
 
 export class CreateSpotDto {
   @IsString()
+  @IsNotEmpty()
   public name: string;
 
-  @IsNumber()
-  public country_id: number;
+  @IsString()
+  @IsNotEmpty()
+  public country: string;
 
   @IsString()
   @IsOptional()
@@ -20,18 +22,18 @@ export class CreateSpotDto {
   public has_coliving?: boolean;
 
   @IsNumber()
+  @IsNotEmpty()
   public latitude: number;
 
   @IsNumber()
+  @IsNotEmpty()
   public longitude: number;
+
+  // @IsString()
+  // @IsNotEmpty()
+  // public submitted_by: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  public wifi_quality: number;
 }
-
-// export class CreateSpotLikeDto {
-//   @IsNumber()
-//   @IsNotEmpty()
-//   public user_id: number;
-
-//   @IsNumber()
-//   @IsNotEmpty()
-//   public spot_id: number;
-// }

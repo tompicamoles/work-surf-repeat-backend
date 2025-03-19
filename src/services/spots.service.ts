@@ -71,7 +71,6 @@ export class SpotService {
     const { rows, rowCount } = await pg.query(
       `
       SELECT spots.*,
-             countries.name as country_name,
              countries.code as country_code,
              countries.continent,
              countries.surf_season,
@@ -92,23 +91,26 @@ export class SpotService {
   }
 
   public async createSpot(spotData: Partial<Spot>): Promise<Spot> {
-    const { name, country_id, image_link, has_coworking, has_coliving, latitude, longitude } = spotData;
+    const { name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality } = spotData;
 
+    console.log('spotData', spotData);
     const { rows } = await pg.query(
       `
       INSERT INTO spots (
         name, 
-        country_id, 
+        country, 
         image_link, 
         has_coworking, 
         has_coliving, 
         latitude, 
-        longitude
+        longitude,
+        submitted_by,
+        wifi_quality
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *
     `,
-      [name, country_id, image_link, has_coworking, has_coliving, latitude, longitude],
+      [name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality],
     );
 
     return rows[0];
@@ -168,119 +170,4 @@ export class SpotService {
 
     if (!rowCount) throw new HttpException(409, "Spot doesn't exist");
   }
-
-  // public async findUserById(userId: number): Promise<User> {
-  //   const { rows, rowCount } = await pg.query(
-  //     `
-  //   SELECT
-  //     *
-  //   FROM
-  //     users
-  //   WHERE
-  //     id = $1
-  //   `,
-  //     [userId],
-  //   );
-  //   if (!rowCount) throw new HttpException(409, "User doesn't exist");
-
-  //   return rows[0];
-  // }
-
-  // public async createUser(userData: User): Promise<User> {
-  //   const { email, password } = userData;
-
-  //   const { rows } = await pg.query(
-  //     `
-  //   SELECT EXISTS(
-  //     SELECT
-  //       "email"
-  //     FROM
-  //       users
-  //     WHERE
-  //       "email" = $1
-  //   )`,
-  //     [email],
-  //   );
-  //   if (rows[0].exists) throw new HttpException(409, `This email ${email} already exists`);
-
-  //   const hashedPassword = await hash(password, 10);
-  //   const { rows: createUserData } = await pg.query(
-  //     `
-  //     INSERT INTO
-  //       users(
-  //         "email",
-  //         "password"
-  //       )
-  //     VALUES ($1, $2)
-  //     RETURNING "email", "password"
-  //     `,
-  //     [email, hashedPassword],
-  //   );
-
-  //   return createUserData[0];
-  // }
-
-  // public async updateUser(userId: number, userData: User): Promise<User[]> {
-  //   const { rows: findUser } = await pg.query(
-  //     `
-  //     SELECT EXISTS(
-  //       SELECT
-  //         "id"
-  //       FROM
-  //         users
-  //       WHERE
-  //         "id" = $1
-  //     )`,
-  //     [userId],
-  //   );
-  //   if (findUser[0].exists) throw new HttpException(409, "User doesn't exist");
-
-  //   const { email, password } = userData;
-  //   const hashedPassword = await hash(password, 10);
-  //   const { rows: updateUserData } = await pg.query(
-  //     `
-  //     UPDATE
-  //       users
-  //     SET
-  //       "email" = $2,
-  //       "password" = $3
-  //     WHERE
-  //       "id" = $1
-  //     RETURNING "email", "password"
-  //   `,
-  //     [userId, email, hashedPassword],
-  //   );
-
-  //   return updateUserData;
-  // }
-
-  // public async deleteUser(userId: number): Promise<User[]> {
-  //   const { rows: findUser } = await pg.query(
-  //     `
-  //     SELECT EXISTS(
-  //       SELECT
-  //         "id"
-  //       FROM
-  //         users
-  //       WHERE
-  //         "id" = $1
-  //     )`,
-  //     [userId],
-  //   );
-  //   if (findUser[0].exists) throw new HttpException(409, "User doesn't exist");
-
-  //   const { rows: deleteUserData } = await pg.query(
-  //     `
-  //     DELETE
-  //     FROM
-  //       users
-  //     WHERE
-  //       id = $1
-  //     RETURNING "email", "password"
-  //     `,
-  //     [userId],
-  //   );
-
-  //   return deleteUserData;
-  // }
 }

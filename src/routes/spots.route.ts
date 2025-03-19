@@ -17,7 +17,7 @@ export class SpotRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.spot.getSpots);
     this.router.get(`${this.path}/:id(\\d+)`, this.spot.getSpotById);
-    this.router.post(`${this.path}`, ValidationMiddleware(CreateSpotDto), this.spot.createSpot);
+    this.router.post(`${this.path}`, AuthMiddleware, ValidationMiddleware(CreateSpotDto), this.spot.createSpot);
     this.router.get(`${this.path}/:id(\\d+)/workplaces`, this.workPlace.getWorkPlacesBySpotId);
     //this.router.put(`${this.path}/:id(\\d+)`, ValidationMiddleware(CreateSpotDto, true), this.spot.updateSpot);
     this.router.post(`${this.path}/:id(\\d+)/like`, AuthMiddleware, this.spot.addSpotLike);

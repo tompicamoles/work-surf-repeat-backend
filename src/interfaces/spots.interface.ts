@@ -1,13 +1,14 @@
 export interface Spot {
   id: number;
   name: string;
-  country_id: number;
+  country: number;
   image_link: string;
   has_coworking: boolean;
   has_coliving: boolean;
   latitude: string;
   longitude: string;
-  country_name: string;
+  submitted_by: string;
+  wifi_quality: number;
   country_code: string;
   continent: string;
   surf_season: string;
