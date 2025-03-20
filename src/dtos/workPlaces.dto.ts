@@ -2,18 +2,19 @@ import { IsString, IsNumber, IsOptional, IsUrl, Min, Max, IsNotEmpty } from 'cla
 
 export class CreateWorkPlaceDto {
   @IsString()
+  @IsNotEmpty()
   public name: string;
 
   @IsString()
+  @IsNotEmpty()
   public type: string;
 
   @IsNumber()
+  @IsNotEmpty()
   public spot_id: number;
 
-  @IsNumber()
-  public creator_user_id: number;
-
   @IsString()
+  @IsNotEmpty()
   public adress: string;
 
   @IsUrl()
@@ -21,9 +22,11 @@ export class CreateWorkPlaceDto {
   public image_link?: string;
 
   @IsNumber()
+  @IsNotEmpty()
   public latitude: number;
 
   @IsNumber()
+  @IsNotEmpty()
   public longitude: number;
 
   @IsNumber()

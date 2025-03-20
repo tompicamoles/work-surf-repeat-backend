@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { WorkPlacesService } from '@services/workPlaces.service';
 import { CreateWorkPlaceDto, CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
+import { RequestWithUser } from '@interfaces/auth.interface';
+import { WorkPlaceInterface } from '@interfaces/workPlaces.interface';
 export class WorkPlacesController {
   public workPlaceService = new WorkPlacesService();
 
@@ -28,17 +30,24 @@ export class WorkPlacesController {
       const spotId = Number(req.params.id);
       console.log(spotId);
       const findWorkPlacesData = await this.workPlaceService.findWorkPlacesBySpotId(spotId);
-      res.status(200).json({ data: findWorkPlacesData, message: 'findBySpotId' });
+      res.status(200).json(findWorkPlacesData);
     } catch (error) {
       next(error);
     }
   };
 
-  public createWorkPlace = async (req: Request, res: Response, next: NextFunction) => {
+  public createWorkPlace = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const workPlaceData: CreateWorkPlaceDto = req.body;
-      const createWorkPlaceData = await this.workPlaceService.createWorkPlace(workPlaceData);
-      res.status(201).json({ data: createWorkPlaceData, message: 'created' });
+      const userId = req.user.id;
+      const userName = req.user.name;
+      const workPlaceData = { ...req.body, submitted_by: userId, creator_name: userName };
+      console.log('workPlaceData', workPlaceData);
+      const createWorkPlaceData: WorkPlaceInterface = await this.workPlaceService.createWorkPlace(workPlaceData);
+
+      const rating = req.body.rating;
+
+      await this.workPlaceService.createWorkPlaceRating(createWorkPlaceData.id, userId, rating);
+      res.status(201).json(createWorkPlaceData);
     } catch (error) {
       next(error);
     }
@@ -67,10 +76,10 @@ export class WorkPlacesController {
   public createWorkPlaceRating = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const workPlaceId = Number(req.params.id);
-      const workPlaceRatingData: CreateWorkPlaceRatingDto = req.body;
+      const rating = req.body.rating;
       //const userId = req.user.id;
       const userId = 1;
-      const createWorkPlaceRatingData = await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, workPlaceRatingData);
+      const createWorkPlaceRatingData = await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, rating);
       res.status(201).json({ data: createWorkPlaceRatingData, message: 'created' });
     } catch (error) {
       next(error);

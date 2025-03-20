@@ -1,10 +1,10 @@
-import { WorkPlace, WorkPlaceRating } from '@interfaces/workPlaces.interface';
+import { WorkPlaceInterface, WorkPlaceRatingInterface } from '@interfaces/workPlaces.interface';
 import { CreateWorkPlaceDto, CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
 import { HttpException } from '@exceptions/httpException';
 import pg from '@database';
 
 export class WorkPlacesService {
-  public async findAllWorkPlaces(): Promise<WorkPlace[]> {
+  public async findAllWorkPlaces(): Promise<WorkPlaceInterface[]> {
     const { rows } = await pg.query(`SELECT 
         work_places.*,
         AVG(ratings.rating) as rating
@@ -17,7 +17,7 @@ export class WorkPlacesService {
     return rows;
   }
 
-  public async findWorkPlaceById(workPlaceId: number): Promise<WorkPlace> {
+  public async findWorkPlaceById(workPlaceId: number): Promise<WorkPlaceInterface> {
     const { rows } = await pg.query(
       `
       SELECT 
@@ -36,12 +36,12 @@ export class WorkPlacesService {
     return rows[0];
   }
 
-  public async findWorkPlacesBySpotId(spotId: number): Promise<WorkPlace[]> {
+  public async findWorkPlacesBySpotId(spotId: number): Promise<WorkPlaceInterface[]> {
     const { rows } = await pg.query(
       `
       SELECT 
         work_places.*,
-        AVG(ratings.rating) as rating
+        ROUND(AVG(ratings.rating)::numeric, 1) as rating
       FROM 
         work_places
       LEFT JOIN 
@@ -53,50 +53,55 @@ export class WorkPlacesService {
     return rows;
   }
 
-  public async createWorkPlace(workPlaceData: CreateWorkPlaceDto): Promise<WorkPlace> {
+  public async createWorkPlace(workPlaceData: WorkPlaceInterface): Promise<WorkPlaceInterface> {
     const { rows } = await pg.query(
       `INSERT INTO work_places 
-      (name, type, spot_id, creator_user_id, adress, image_link, latitude, longitude, rating)
+      (name, type, spot_id, submitted_by, creator_name, adress, image_link, latitude, longitude)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *`,
       [
         workPlaceData.name,
         workPlaceData.type,
         workPlaceData.spot_id,
-        workPlaceData.creator_user_id,
+        workPlaceData.submitted_by,
+        workPlaceData.creator_name,
         workPlaceData.adress,
         workPlaceData.image_link,
         workPlaceData.latitude,
         workPlaceData.longitude,
-        workPlaceData.rating,
       ],
     );
 
     return rows[0];
   }
 
-  public async deleteWorkPlace(workPlaceId: number): Promise<WorkPlace> {
+  public async deleteWorkPlace(workPlaceId: number): Promise<WorkPlaceInterface> {
     const { rows } = await pg.query('DELETE FROM work_places WHERE id = $1 RETURNING *', [workPlaceId]);
     if (!rows.length) throw new HttpException(404, "WorkPlace doesn't exist");
 
     return rows[0];
   }
 
-  public async findWorkPlaceRatings(workPlaceId: number): Promise<WorkPlaceRating[]> {
+  public async findWorkPlaceRatings(workPlaceId: number): Promise<WorkPlaceRatingInterface[]> {
     const { rows } = await pg.query('SELECT * FROM ratings WHERE work_place_id = $1', [workPlaceId]);
     return rows;
   }
 
-  public async createWorkPlaceRating(workPlaceId: number, userId: number, workPlaceRatingData: CreateWorkPlaceRatingDto): Promise<WorkPlaceRating> {
+  public async createWorkPlaceRating(workPlaceId: number, userId: number, rating: number): Promise<WorkPlaceRatingInterface> {
+    console.log('workPlaceRatingData', rating);
     const { rows } = await pg.query('INSERT INTO ratings (work_place_id, user_id, rating) VALUES ($1, $2, $3) RETURNING *', [
       workPlaceId,
       userId,
-      workPlaceRatingData.rating,
+      rating,
     ]);
     return rows[0];
   }
 
-  public async updateWorkPlaceRating(workPlaceId: number, userId: number, workPlaceRatingData: CreateWorkPlaceRatingDto): Promise<WorkPlaceRating> {
+  public async updateWorkPlaceRating(
+    workPlaceId: number,
+    userId: number,
+    workPlaceRatingData: CreateWorkPlaceRatingDto,
+  ): Promise<WorkPlaceRatingInterface> {
     const { rows } = await pg.query('UPDATE ratings SET rating = $1 WHERE work_place_id = $2 AND user_id = $3 RETURNING *', [
       workPlaceRatingData.rating,
       workPlaceId,
@@ -105,7 +110,7 @@ export class WorkPlacesService {
     return rows[0];
   }
 
-  public async deleteWorkPlaceRating(workPlaceId: number, userId: number): Promise<WorkPlaceRating> {
+  public async deleteWorkPlaceRating(workPlaceId: number, userId: number): Promise<WorkPlaceRatingInterface> {
     const { rows } = await pg.query('DELETE FROM ratings WHERE work_place_id = $1 AND user_id = $2 RETURNING *', [workPlaceId, userId]);
     return rows[0];
   }

@@ -16,7 +16,7 @@ export class WorkPlacesRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.workPlace.getWorkPlaces);
     this.router.get(`${this.path}/:id(\\d+)`, this.workPlace.getWorkPlaceById);
-    this.router.post(`${this.path}`, ValidationMiddleware(CreateWorkPlaceDto), this.workPlace.createWorkPlace);
+    this.router.post(`${this.path}`, AuthMiddleware, ValidationMiddleware(CreateWorkPlaceDto), this.workPlace.createWorkPlace);
     this.router.delete(`${this.path}/:id(\\d+)`, this.workPlace.deleteWorkPlace);
     this.router.get(`${this.path}/:id(\\d+)/ratings`, this.workPlace.getWorkPlaceRatings);
     this.router.post(

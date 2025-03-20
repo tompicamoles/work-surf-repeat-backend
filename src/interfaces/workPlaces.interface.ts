@@ -1,9 +1,10 @@
-export interface WorkPlace {
+export interface WorkPlaceInterface {
   id: number;
   name: string;
   type: string;
   spot_id: number;
-  creator_user_id: number;
+  submitted_by: number;
+  creator_name: string;
   adress: string;
   image_link: string;
   latitude: number;
@@ -13,7 +14,7 @@ export interface WorkPlace {
   rating: number | null;
 }
 
-export interface WorkPlaceRating {
+export interface WorkPlaceRatingInterface {
   id: number;
   work_place_id: number;
   user_id: number;
