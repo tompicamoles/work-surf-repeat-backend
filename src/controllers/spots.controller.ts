@@ -17,22 +17,20 @@ export class SpotController {
       hasCoworking,
       hasColiving,
     }: {
-      lifeCost?: number;
+      lifeCost?: string;
       country?: string;
-      wifiQuality?: number;
-      hasCoworking?: boolean;
-      hasColiving?: boolean;
+      wifiQuality?: string;
+      hasCoworking?: string;
+      hasColiving?: string;
     } = req.query;
 
-    console.log(lifeCost, 'lifeCost');
-    console.log(req.body, 'req.body');
     try {
       const findAllSpotsData: Spot[] = await this.spot.findAllSpot({
-        lifeCost,
+        lifeCost: lifeCost ? parseInt(lifeCost) : undefined,
         country,
-        wifiQuality,
-        hasCoworking,
-        hasColiving,
+        wifiQuality: wifiQuality ? parseInt(wifiQuality) : undefined,
+        hasCoworking: hasCoworking === 'true' ? true : undefined,
+        hasColiving: hasColiving === 'true' ? true : undefined,
       });
       res.status(200).json(findAllSpotsData);
     } catch (error) {

@@ -63,6 +63,8 @@ export class SpotService {
       }
     }
 
+    console.log('query', query);
+
     const { rows } = await pg.query(query, values);
     return rows;
   }
@@ -108,12 +110,13 @@ export class SpotService {
         wifi_quality
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      RETURNING *
+      RETURNING id
     `,
       [name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality],
     );
 
-    return rows[0];
+    // Fetch the newly created spot with all the joined data
+    return this.findSpotById(rows[0].id);
   }
 
   public async findAllSpotLikes(spotId: number): Promise<SpotLike[]> {
