@@ -15,6 +15,9 @@ export interface Spot {
   good_weather_season: string;
   timezone: string;
   life_cost: number;
+  creator_name: string;
+  like_user_ids: number[];
+  total_likes: number;
 }
 
 export interface SpotLike {

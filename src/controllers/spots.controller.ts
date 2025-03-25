@@ -50,9 +50,8 @@ export class SpotController {
 
   public createSpot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userName = req.user.name;
-      console.log('userName', userName, 'req.user', req.user);
-      const spotData: Spot = { ...req.body, submitted_by: userName };
+      const { name, id } = req.user;
+      const spotData: Spot = { ...req.body, submitted_by: id, creator_name: name };
       console.log('spotData', spotData);
       const createSpotData: Spot = await this.spot.createSpot(spotData);
       res.status(201).json(createSpotData);
