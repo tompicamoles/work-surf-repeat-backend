@@ -29,10 +29,6 @@ export class CreateSpotDto {
   @IsNotEmpty()
   public longitude: number;
 
-  // @IsString()
-  // @IsNotEmpty()
-  // public submitted_by: string;
-
   @IsNumber()
   @IsNotEmpty()
   public wifi_quality: number;

@@ -1,7 +1,7 @@
 export interface Spot {
   id: number;
   name: string;
-  country: number;
+  country: string;
   image_link: string;
   has_coworking: boolean;
   has_coliving: boolean;

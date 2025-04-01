@@ -5,6 +5,23 @@ import { ValidationMiddleware } from '@middlewares/validation.middleware';
 import { CreateSpotDto } from '@dtos/spots.dto';
 import { WorkPlacesController } from '@controllers/workPlaces.controller';
 import { AuthMiddleware } from '@middlewares/auth.middleware';
+
+/**
+ * @swagger
+ * /spots:
+ *   get:
+ *     summary: Get all spots
+ *     tags: [Spots]
+ *     responses:
+ *       200:
+ *         description: List of spots
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Spot'
+ */
 export class SpotRoute implements Routes {
   public path = '/spots';
   public router = Router();
