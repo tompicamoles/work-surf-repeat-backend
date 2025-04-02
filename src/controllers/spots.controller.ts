@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Container } from 'typedi';
 import { SpotService } from '@services/spots.service';
-import { Spot, SpotLike } from '@interfaces/spots.interface';
+import { Spot, SpotLike, CreateSpotData } from '@interfaces/spots.interface';
 import { RequestWithUser } from '@interfaces/auth.interface';
 
 export class SpotController {
@@ -51,7 +51,11 @@ export class SpotController {
   public createSpot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { name, id } = req.user;
-      const spotData: Spot = { ...req.body, submitted_by: id, creator_name: name };
+      const spotData: CreateSpotData = {
+        ...req.body,
+        submitted_by: id,
+        creator_name: name,
+      };
       console.log('spotData', spotData);
       const createSpotData: Spot = await this.spot.createSpot(spotData);
       res.status(201).json(createSpotData);

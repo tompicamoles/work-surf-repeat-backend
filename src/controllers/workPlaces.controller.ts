@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { WorkPlacesService } from '@services/workPlaces.service';
-import { CreateWorkPlaceDto, CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
+import { CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
-import { WorkPlaceInterface } from '@interfaces/workPlaces.interface';
+import { WorkPlaceInterface, CreateWorkPlaceData } from '@interfaces/workPlaces.interface';
+
 export class WorkPlacesController {
   public workPlaceService = new WorkPlacesService();
 
-  public getWorkPlaces = async (req: Request, res: Response, next: NextFunction) => {
+  public getWorkPlaces = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const findAllWorkPlacesData = await this.workPlaceService.findAllWorkPlaces();
       res.status(200).json({ data: findAllWorkPlacesData, message: 'findAll' });
@@ -38,15 +39,20 @@ export class WorkPlacesController {
 
   public createWorkPlace = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user.id;
-      const userName = req.user.name;
-      const workPlaceData = { ...req.body, submitted_by: userId, creator_name: userName };
+      const { id, name } = req.user;
+      const workPlaceData: CreateWorkPlaceData = {
+        ...req.body,
+        submitted_by: id,
+        creator_name: name,
+      };
       console.log('workPlaceData', workPlaceData);
       const createWorkPlaceData: WorkPlaceInterface = await this.workPlaceService.createWorkPlace(workPlaceData);
 
       const rating = req.body.rating;
 
-      await this.workPlaceService.createWorkPlaceRating(createWorkPlaceData.id, userId, rating);
+      if (rating) {
+        await this.workPlaceService.createWorkPlaceRating(createWorkPlaceData.id, id, rating);
+      }
       res.status(201).json(createWorkPlaceData);
     } catch (error) {
       next(error);
@@ -73,12 +79,11 @@ export class WorkPlacesController {
     }
   };
 
-  public createWorkPlaceRating = async (req: Request, res: Response, next: NextFunction) => {
+  public createWorkPlaceRating = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const workPlaceId = Number(req.params.id);
       const rating = req.body.rating;
-      //const userId = req.user.id;
-      const userId = 1;
+      const userId = req.user.id;
       const createWorkPlaceRatingData = await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, rating);
       res.status(201).json({ data: createWorkPlaceRatingData, message: 'created' });
     } catch (error) {
@@ -98,11 +103,10 @@ export class WorkPlacesController {
     }
   };
 
-  public deleteWorkPlaceRating = async (req: Request, res: Response, next: NextFunction) => {
+  public deleteWorkPlaceRating = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const workPlaceId = Number(req.params.id);
-      //const userId = req.user.id;
-      const userId = 1;
+      const userId = req.user.id;
       const deleteWorkPlaceRatingData = await this.workPlaceService.deleteWorkPlaceRating(workPlaceId, userId);
       res.status(200).json({ data: deleteWorkPlaceRatingData, message: 'deleted' });
     } catch (error) {

@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import pg from '@database';
 import { HttpException } from '@exceptions/httpException';
-import { Spot, SpotLike } from '@/interfaces/spots.interface';
+import { Spot, SpotLike, CreateSpotData } from '@/interfaces/spots.interface';
 
 @Service()
 export class SpotService {
@@ -92,7 +92,7 @@ export class SpotService {
     return rows[0];
   }
 
-  public async createSpot(spotData: Partial<Spot>): Promise<Spot> {
+  public async createSpot(spotData: CreateSpotData): Promise<Spot> {
     const { name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality, creator_name } = spotData;
 
     console.log('spotData', spotData);

@@ -25,3 +25,17 @@ export interface SpotLike {
   user_id: number;
   spot_id: number;
 }
+
+// Input type for creating a spot in the database
+export interface CreateSpotData {
+  name: string;
+  country: string;
+  image_link?: string;
+  has_coworking?: boolean;
+  has_coliving?: boolean;
+  latitude: string | number;
+  longitude: string | number;
+  submitted_by: string | number;
+  wifi_quality: number;
+  creator_name: string;
+}

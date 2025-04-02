@@ -1,7 +1,8 @@
 import { WorkPlaceInterface, WorkPlaceRatingInterface } from '@interfaces/workPlaces.interface';
-import { CreateWorkPlaceDto, CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
+import { CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
 import { HttpException } from '@exceptions/httpException';
 import pg from '@database';
+import { CreateWorkPlaceData } from '@interfaces/workPlaces.interface';
 
 export class WorkPlacesService {
   public async findAllWorkPlaces(): Promise<WorkPlaceInterface[]> {
@@ -53,7 +54,7 @@ export class WorkPlacesService {
     return rows;
   }
 
-  public async createWorkPlace(workPlaceData: WorkPlaceInterface): Promise<WorkPlaceInterface> {
+  public async createWorkPlace(workPlaceData: CreateWorkPlaceData): Promise<WorkPlaceInterface> {
     const { rows } = await pg.query(
       `INSERT INTO work_places 
       (name, type, spot_id, submitted_by, creator_name, adress, image_link, latitude, longitude)
