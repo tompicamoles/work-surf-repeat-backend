@@ -3,6 +3,10 @@ import { IsString, IsNumber, IsOptional, IsUrl, Min, Max, IsNotEmpty } from 'cla
 export class CreateWorkPlaceDto {
   @IsString()
   @IsNotEmpty()
+  public id: string;
+
+  @IsString()
+  @IsNotEmpty()
   public name: string;
 
   @IsString()

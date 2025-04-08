@@ -1,5 +1,5 @@
 export interface WorkPlaceInterface {
-  id: number;
+  id: string;
   name: string;
   type: string;
   spot_id: number;
@@ -15,13 +15,14 @@ export interface WorkPlaceInterface {
 }
 
 export interface WorkPlaceRatingInterface {
-  id: number;
-  work_place_id: number;
+  id: string;
+  work_place_id: string;
   user_id: number;
   rating: number;
 }
 
 export interface CreateWorkPlaceData {
+  id: string;
   name: string;
   type: string;
   spot_id: number;

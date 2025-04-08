@@ -39,19 +39,26 @@ export class WorkPlacesController {
 
   public createWorkPlace = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const { id, name } = req.user;
+      const { id: userId, name: userName } = req.user;
+      const { id: workPlaceId, name, type, spot_id, adress, image_link, latitude, longitude, rating } = req.body;
+
       const workPlaceData: CreateWorkPlaceData = {
-        ...req.body,
-        submitted_by: id,
-        creator_name: name,
+        id: workPlaceId,
+        name,
+        type,
+        spot_id,
+        adress,
+        image_link,
+        latitude,
+        longitude,
+        submitted_by: userId,
+        creator_name: userName,
       };
       console.log('workPlaceData', workPlaceData);
       const createWorkPlaceData: WorkPlaceInterface = await this.workPlaceService.createWorkPlace(workPlaceData);
 
-      const rating = req.body.rating;
-
       if (rating) {
-        await this.workPlaceService.createWorkPlaceRating(createWorkPlaceData.id, id, rating);
+        await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, rating);
       }
       res.status(201).json(createWorkPlaceData);
     } catch (error) {
@@ -81,9 +88,9 @@ export class WorkPlacesController {
 
   public createWorkPlaceRating = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const workPlaceId = Number(req.params.id);
-      const rating = req.body.rating;
-      const userId = req.user.id;
+      const workPlaceId: string = req.params.id;
+      const rating: number = req.body.rating;
+      const userId: number = req.user.id;
       const createWorkPlaceRatingData = await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, rating);
       res.status(201).json({ data: createWorkPlaceRatingData, message: 'created' });
     } catch (error) {

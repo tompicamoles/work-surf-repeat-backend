@@ -140,9 +140,9 @@ const options: swaggerJSDoc.Options = {
           required: ['id', 'name', 'type', 'spot_id'],
           properties: {
             id: {
-              type: 'integer',
+              type: 'string',
               description: 'WorkPlace identifier',
-              example: 1,
+              example: 'wp123',
             },
             name: {
               type: 'string',
@@ -218,9 +218,9 @@ const options: swaggerJSDoc.Options = {
               example: 123,
             },
             work_place_id: {
-              type: 'integer',
+              type: 'string',
               description: 'ID of the workplace that was rated',
-              example: 1,
+              example: 'wp123',
             },
             user_id: {
               type: 'integer',
@@ -282,8 +282,13 @@ const options: swaggerJSDoc.Options = {
         },
         CreateWorkPlaceDto: {
           type: 'object',
-          required: ['name', 'type', 'spot_id', 'adress', 'latitude', 'longitude'],
+          required: ['id', 'name', 'type', 'spot_id', 'adress', 'latitude', 'longitude'],
           properties: {
+            id: {
+              type: 'string',
+              description: 'Workplace identifier',
+              example: 'wp123',
+            },
             name: {
               type: 'string',
               description: 'Workplace name',

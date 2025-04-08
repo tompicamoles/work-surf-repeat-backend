@@ -57,10 +57,11 @@ export class WorkPlacesService {
   public async createWorkPlace(workPlaceData: CreateWorkPlaceData): Promise<WorkPlaceInterface> {
     const { rows } = await pg.query(
       `INSERT INTO work_places 
-      (name, type, spot_id, submitted_by, creator_name, adress, image_link, latitude, longitude)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      (id, name, type, spot_id, submitted_by, creator_name, adress, image_link, latitude, longitude)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *`,
       [
+        workPlaceData.id,
         workPlaceData.name,
         workPlaceData.type,
         workPlaceData.spot_id,
@@ -88,7 +89,7 @@ export class WorkPlacesService {
     return rows;
   }
 
-  public async createWorkPlaceRating(workPlaceId: number, userId: number, rating: number): Promise<WorkPlaceRatingInterface> {
+  public async createWorkPlaceRating(workPlaceId: string, userId: number, rating: number): Promise<WorkPlaceRatingInterface> {
     console.log('workPlaceRatingData', rating);
     const { rows } = await pg.query('INSERT INTO ratings (work_place_id, user_id, rating) VALUES ($1, $2, $3) RETURNING *', [
       workPlaceId,
