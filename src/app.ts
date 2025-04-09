@@ -12,6 +12,7 @@ import { Routes } from '@interfaces/routes.interface';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import { apiKeyMiddleware } from '@middlewares/auth.middleware';
+import { globalLimiter } from '@middlewares/rateLimit.middleware';
 import { specs } from './swagger';
 
 export class App {
@@ -47,7 +48,7 @@ export class App {
     this.app.use(morgan(LOG_FORMAT, { stream }));
     this.app.use(
       cors({
-        origin: [process.env.ORIGIN, 'http://localhost:3000'],
+        origin: [process.env.ORIGIN],
         credentials: CREDENTIALS,
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
       }),
@@ -58,6 +59,7 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use(globalLimiter);
   }
 
   private initializeRoutes(routes: Routes[]) {

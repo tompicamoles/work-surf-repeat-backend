@@ -4,6 +4,7 @@ import { CreateUserDto } from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
 import { AuthMiddleware } from '@middlewares/auth.middleware';
 import { ValidationMiddleware } from '@middlewares/validation.middleware';
+import { authLimiter } from '@middlewares/rateLimit.middleware';
 
 export class AuthRoute implements Routes {
   public router = Router();
@@ -14,8 +15,8 @@ export class AuthRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post('/signup', ValidationMiddleware(CreateUserDto), this.auth.signUp);
-    this.router.post('/login', ValidationMiddleware(CreateUserDto), this.auth.logIn);
+    this.router.post('/signup', authLimiter, ValidationMiddleware(CreateUserDto), this.auth.signUp);
+    this.router.post('/login', authLimiter, ValidationMiddleware(CreateUserDto), this.auth.logIn);
     this.router.post('/logout', AuthMiddleware, this.auth.logOut);
     this.router.get('/check', AuthMiddleware, this.auth.checkAuth);
   }
