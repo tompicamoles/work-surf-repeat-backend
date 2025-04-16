@@ -57,6 +57,7 @@ export class WorkPlacesController {
       console.log('workPlaceData', workPlaceData);
       const createWorkPlaceData: WorkPlaceInterface = await this.workPlaceService.createWorkPlace(workPlaceData);
 
+      console.log('there is a rating', rating);
       if (rating) {
         await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, rating);
       }

@@ -17,7 +17,7 @@ export interface WorkPlaceInterface {
 export interface WorkPlaceRatingInterface {
   id: string;
   work_place_id: string;
-  user_id: number;
+  user_id: string;
   rating: number;
 }
 
