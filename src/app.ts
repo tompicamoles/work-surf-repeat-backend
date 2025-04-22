@@ -47,33 +47,19 @@ export class App {
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
 
-    // Log CORS configuration details
-    const originStr = process.env.ORIGIN;
-    const origins = originStr ? originStr.split(',').map(o => o.trim()) : [];
-    console.log('CORS configuration:', {
-      origins,
-      credentials: CREDENTIALS,
-    });
-
+    // Simplified CORS configuration
     this.app.use(
       cors({
-        origin: origins,
+        origin: process.env.ORIGIN,
         credentials: CREDENTIALS,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
         optionsSuccessStatus: 200, // For legacy browser support
       }),
     );
 
-    // Add options handler for preflight requests
-    this.app.options(
-      '*',
-      cors({
-        origin: origins,
-        credentials: CREDENTIALS,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        optionsSuccessStatus: 200,
-      }),
-    );
+    // Simple options handler for preflight requests
+    this.app.options('*', cors());
 
     this.app.use(hpp());
     this.app.use(helmet());
