@@ -20,7 +20,20 @@ const getAuthorization = req => {
 export const apiKeyMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const apiKey = req.headers['x-api-key'];
 
+  console.log('API request headers:', {
+    origin: req.headers.origin,
+    referer: req.headers.referer,
+    method: req.method,
+    path: req.path,
+    'x-api-key': apiKey ? 'Present' : 'Missing',
+  });
+
   if (!apiKey || apiKey !== process.env.API_KEY) {
+    console.log('API Key validation failed', {
+      hasKey: !!apiKey,
+      matchesEnv: apiKey === process.env.API_KEY,
+      envKeyLength: process.env.API_KEY ? process.env.API_KEY.length : 0,
+    });
     return res.status(401).json({ message: 'Unauthorized - Invalid API Key' });
   }
 
