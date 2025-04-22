@@ -9,6 +9,7 @@ module.exports = {
     {
       name: 'prod', // pm2 start App name
       script: 'dist/server.js',
+      node_args: '-r module-alias/register', // Add module-alias register
       exec_mode: 'cluster', // 'cluster' or 'fork'
       instance_var: 'INSTANCE_ID', // instance variable
       instances: 2, // pm2 instance count
