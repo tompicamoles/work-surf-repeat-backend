@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: work-surf-repeat-dev
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./src:/app/src
+      - ./nodemon.json:/app/nodemon.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./.env.development.local:/app/.env.development.local
+      # - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      # - CHOKIDAR_USEPOLLING=true
+      # - LOG_DIR=../logs
+    restart: unless-stopped
+    # If you need to connect to a local database or other services, 
+    # add any required network configurations here 

@@ -1,17 +1,25 @@
 # NodeJS Version 16
 FROM node:16.18-buster-slim
 
-# Copy Dir
-COPY . ./app
-
 # Work to Dir
 WORKDIR /app
 
-# Install Node Package
+# Copy package files first for better layer caching
+COPY package*.json ./
+
+# Install Node Package (including dev dependencies)
 RUN npm install --legacy-peer-deps
 
-# Set Env
-ENV NODE_ENV development
+# Copy tsconfig and nodemon config
+COPY tsconfig.json ./
+COPY nodemon.json ./
 
-# Cmd script
+# Set Env
+ENV NODE_ENV=development
+
+# Expose Port
+EXPOSE 4000
+
+# We don't copy the source code - it will be mounted as a volume
+# CMD uses the dev script which uses nodemon with tsconfig-paths/register
 CMD ["npm", "run", "dev"]

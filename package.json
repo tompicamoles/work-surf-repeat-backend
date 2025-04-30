@@ -28,7 +28,11 @@
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev",
     "type-check": "tsc --noEmit",
-    "debug": "nodemon --inspect src/server.ts"
+    "debug": "nodemon --inspect src/server.ts",
+    "docker-dev:up": "docker compose -f docker-compose.dev.yml up --build -d",
+    "docker-dev:down": "docker compose -f docker-compose.dev.yml down",
+    "docker-prod:up": "docker compose -f docker-compose.prod.yml up --build -d",
+    "docker-prod:down": "docker compose -f docker-compose.prod.yml down"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
