@@ -3,7 +3,7 @@ import { Container } from 'typedi';
 import { SpotService } from '@services/spots.service';
 import { Spot, SpotLike, CreateSpotData } from '@interfaces/spots.interface';
 import { RequestWithUser } from '@interfaces/auth.interface';
-
+import { geminiSpotModerator } from '@utils/geminiSpotModerator';
 export class SpotController {
   public spot = Container.get(SpotService);
 
@@ -57,6 +57,10 @@ export class SpotController {
         creator_name: name,
       };
       console.log('spotData', spotData);
+      // const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
+      // if (!isARealSurfSpot) {
+      //   throw new Error('This is not a real surf spot');
+      // }
       const createSpotData: Spot = await this.spot.createSpot(spotData);
       res.status(201).json(createSpotData);
     } catch (error) {
