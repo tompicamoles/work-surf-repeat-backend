@@ -1,5 +1,5 @@
-# NodeJS Version 16
-FROM node:16.18-buster-slim
+# NodeJS Version 23
+FROM node:23.11-bookworm-slim
 
 # Work to Dir
 WORKDIR /app

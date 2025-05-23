@@ -13,11 +13,7 @@ services:
       - ./nodemon.json:/app/nodemon.json
       - ./tsconfig.json:/app/tsconfig.json
       - ./.env.development.local:/app/.env.development.local
-      # - /app/node_modules
     environment:
       - NODE_ENV=development
-      # - CHOKIDAR_USEPOLLING=true
-      # - LOG_DIR=../logs
+ 
     restart: unless-stopped
-    # If you need to connect to a local database or other services, 
-    # add any required network configurations here 
