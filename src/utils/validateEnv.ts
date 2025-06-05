@@ -12,6 +12,7 @@ export const ValidateEnv = () => {
     POSTGRES_PORT: port(),
     POSTGRES_DB: str(),
     ORIGIN: str(),
+    SUPABASE_JWT_SECRET: str(),
     // Rate limiting environment variables
     GLOBAL_RATE_LIMIT_WINDOW_MS: num({ default: 900000 }), // 15 minutes in milliseconds
     GLOBAL_RATE_LIMIT_MAX: num({ default: 100 }),
