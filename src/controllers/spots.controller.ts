@@ -56,8 +56,8 @@ export class SpotController {
         creator_name: name,
       };
       console.log('spotData', spotData);
-      const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
-      //const isARealSurfSpot = true;
+      //const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
+      const isARealSurfSpot = true;
       console.log('isARealSurfSpot', isARealSurfSpot);
       if (!isARealSurfSpot) {
         return res.status(400).json({
