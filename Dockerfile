@@ -1,6 +1,5 @@
-# NodeJS Version 23
-FROM node:23.11-bookworm-slim
-
+# NodeJS Version 22
+FROM node:22.15-alpine
 # Work to Dir
 WORKDIR /app
 
