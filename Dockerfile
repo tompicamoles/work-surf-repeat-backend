@@ -20,7 +20,7 @@ RUN npm run build
 ENV NODE_ENV=production
 
 # Expose Port
-EXPOSE 4000
+EXPOSE 8080
 
 # Cmd script uses module-alias/register to handle path aliases
 CMD ["npm", "run", "start"]
