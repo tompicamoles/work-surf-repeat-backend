@@ -46,7 +46,6 @@ export class AuthController {
   public checkAuth = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userData: User = req.user;
-      console.log(userData);
       res.status(200).json({ data: userData, message: 'authenticated' });
     } catch (error) {
       next(error);

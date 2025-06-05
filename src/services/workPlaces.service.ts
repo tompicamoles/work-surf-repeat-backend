@@ -90,7 +90,6 @@ export class WorkPlacesService {
   }
 
   public async createWorkPlaceRating(workPlaceId: string, userId: number, rating: number): Promise<WorkPlaceRatingInterface> {
-    console.log('workPlaceRatingData', rating);
     const { rows } = await pg.query('INSERT INTO ratings (work_place_id, user_id, rating) VALUES ($1, $2, $3) RETURNING *', [
       workPlaceId,
       userId,

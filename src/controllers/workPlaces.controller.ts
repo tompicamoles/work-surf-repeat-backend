@@ -29,7 +29,6 @@ export class WorkPlacesController {
   public getWorkPlacesBySpotId = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const spotId = Number(req.params.id);
-      console.log(spotId);
       const findWorkPlacesData = await this.workPlaceService.findWorkPlacesBySpotId(spotId);
       res.status(200).json(findWorkPlacesData);
     } catch (error) {
@@ -54,10 +53,8 @@ export class WorkPlacesController {
         submitted_by: userId,
         creator_name: userName,
       };
-      console.log('workPlaceData', workPlaceData);
       const createWorkPlaceData: WorkPlaceInterface = await this.workPlaceService.createWorkPlace(workPlaceData);
 
-      console.log('there is a rating', rating);
       if (rating) {
         await this.workPlaceService.createWorkPlaceRating(workPlaceId, userId, rating);
       }
