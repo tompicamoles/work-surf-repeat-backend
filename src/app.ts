@@ -71,6 +71,11 @@ export class App {
   }
 
   private initializeRoutes(routes: Routes[]) {
+    // Health check endpoint for Cloud Run
+    this.app.get('/health', (req, res) => {
+      res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+    });
+
     routes.forEach(route => {
       this.app.use('', apiKeyMiddleware, route.router);
     });
