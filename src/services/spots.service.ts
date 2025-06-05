@@ -63,8 +63,6 @@ export class SpotService {
       }
     }
 
-    console.log('query', query);
-
     const { rows } = await pg.query(query, values);
     return rows;
   }
@@ -95,7 +93,6 @@ export class SpotService {
   public async createSpot(spotData: CreateSpotData): Promise<Spot> {
     const { name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality, creator_name } = spotData;
 
-    console.log('spotData', spotData);
     const { rows } = await pg.query(
       `
       INSERT INTO spots (

@@ -9,7 +9,6 @@ export class SpotController {
 
   public getSpots = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     //filters
-    console.log(req.query, 'req.query');
     const {
       lifeCost,
       country,
@@ -48,7 +47,7 @@ export class SpotController {
     }
   };
 
-  public createSpot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+  public createSpot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
       const { name, id } = req.user;
       const spotData: CreateSpotData = {
@@ -57,12 +56,19 @@ export class SpotController {
         creator_name: name,
       };
       console.log('spotData', spotData);
-      // const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
-      // if (!isARealSurfSpot) {
-      //   throw new Error('This is not a real surf spot');
-      // }
-      const createSpotData: Spot = await this.spot.createSpot(spotData);
-      res.status(201).json(createSpotData);
+      const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
+      //const isARealSurfSpot = true;
+      console.log('isARealSurfSpot', isARealSurfSpot);
+      if (!isARealSurfSpot) {
+        return res.status(400).json({
+          success: false,
+          message: `Validation failed: ${spotData.name}, ${spotData.country} is not a real surf spot or is not close enough to the ocean for surfing.`,
+        });
+      }
+      if (isARealSurfSpot) {
+        const createSpotData: Spot = await this.spot.createSpot(spotData);
+        res.status(201).json(createSpotData);
+      }
     } catch (error) {
       next(error);
     }
