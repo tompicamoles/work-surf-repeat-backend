@@ -3,6 +3,7 @@ import { WorkPlacesService } from '@services/workPlaces.service';
 import { CreateWorkPlaceRatingDto } from '@/dtos/workPlaces.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { WorkPlaceInterface, CreateWorkPlaceData } from '@interfaces/workPlaces.interface';
+import { generateRandomSurfImage } from '@/utils/generateRandomSurfImage';
 
 export class WorkPlacesController {
   public workPlaceService = new WorkPlacesService();
@@ -53,6 +54,11 @@ export class WorkPlacesController {
         submitted_by: userId,
         creator_name: userName,
       };
+
+      if (!workPlaceData.image_link) {
+        workPlaceData.image_link = await generateRandomSurfImage('beach café');
+      }
+
       const createWorkPlaceData: WorkPlaceInterface = await this.workPlaceService.createWorkPlace(workPlaceData);
 
       if (rating) {

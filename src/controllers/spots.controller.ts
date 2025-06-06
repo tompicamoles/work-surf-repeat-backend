@@ -4,6 +4,8 @@ import { SpotService } from '@services/spots.service';
 import { Spot, SpotLike, CreateSpotData } from '@interfaces/spots.interface';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { geminiSpotModerator } from '@utils/geminiSpotModerator';
+import { generateRandomSurfImage } from '@/utils/generateRandomSurfImage';
+import { getGeolocation } from '@/utils/getGeolocation';
 export class SpotController {
   public spot = Container.get(SpotService);
 
@@ -56,16 +58,24 @@ export class SpotController {
         creator_name: name,
       };
       const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
+
       if (!isARealSurfSpot) {
         return res.status(400).json({
           success: false,
           message: `Validation failed: ${spotData.name}, ${spotData.country} is not a real surf spot or is not close enough to the ocean for surfing.`,
         });
       }
-      if (isARealSurfSpot) {
-        const createSpotData: Spot = await this.spot.createSpot(spotData);
-        res.status(201).json(createSpotData);
+
+      if (!spotData.image_link) {
+        spotData.image_link = await generateRandomSurfImage('surf');
       }
+
+      const geolocation = await getGeolocation(spotData.name, spotData.country);
+      spotData.latitude = geolocation.latitude;
+      spotData.longitude = geolocation.longitude;
+
+      const createSpotData: Spot = await this.spot.createSpot(spotData);
+      res.status(201).json(createSpotData);
     } catch (error) {
       next(error);
     }
