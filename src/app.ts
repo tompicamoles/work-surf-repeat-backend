@@ -45,6 +45,9 @@ export class App {
   }
 
   private initializeMiddlewares() {
+    // Enable trust proxy for Google Cloud Run
+    this.app.set('trust proxy', true);
+
     this.app.use(morgan(LOG_FORMAT, { stream }));
 
     // Simplified CORS configuration
