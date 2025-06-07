@@ -236,7 +236,7 @@ const options: swaggerJSDoc.Options = {
         },
         CreateSpotDto: {
           type: 'object',
-          required: ['name', 'country', 'latitude', 'longitude', 'wifi_quality'],
+          required: ['name', 'country', 'wifi_quality'],
           properties: {
             name: {
               type: 'string',
@@ -262,16 +262,6 @@ const options: swaggerJSDoc.Options = {
               type: 'boolean',
               description: 'Whether the spot has coliving facilities',
               example: true,
-            },
-            latitude: {
-              type: 'number',
-              description: 'Latitude coordinates of the spot',
-              example: -8.6478,
-            },
-            longitude: {
-              type: 'number',
-              description: 'Longitude coordinates of the spot',
-              example: 115.1385,
             },
             wifi_quality: {
               type: 'number',
