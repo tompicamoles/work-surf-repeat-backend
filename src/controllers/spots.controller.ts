@@ -3,7 +3,7 @@ import { Container } from 'typedi';
 import { SpotService } from '@services/spots.service';
 import { Spot, SpotLike, CreateSpotData } from '@interfaces/spots.interface';
 import { RequestWithUser } from '@interfaces/auth.interface';
-import { geminiSpotModerator } from '@utils/geminiSpotModerator';
+import { geminiSpotModerator, geminiSummaryGenerator } from '@/utils/geminiApi';
 import { generateRandomSurfImage } from '@/utils/generateRandomSurfImage';
 import { getGeolocation } from '@/utils/getGeolocation';
 export class SpotController {
@@ -62,13 +62,17 @@ export class SpotController {
       if (!isARealSurfSpot) {
         return res.status(400).json({
           success: false,
-          message: `Validation failed: ${spotData.name}, ${spotData.country} is not a real surf spot or is not close enough to the ocean for surfing.`,
+          message: `Validation failed: ${spotData.name}, ${spotData.country} is not a real surf spot or is not close enough to the ocean for surfing or not suitable for remote working.`,
         });
       }
 
       if (!spotData.image_link) {
         spotData.image_link = await generateRandomSurfImage('surf');
       }
+
+      const summary = await geminiSummaryGenerator(spotData.name, spotData.country);
+      spotData.summary = summary;
+      console.log(spotData.summary);
 
       const geolocation = await getGeolocation(spotData.name, spotData.country);
       spotData.latitude = geolocation.latitude;

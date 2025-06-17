@@ -91,7 +91,8 @@ export class SpotService {
   }
 
   public async createSpot(spotData: CreateSpotData): Promise<Spot> {
-    const { name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality, creator_name } = spotData;
+    const { name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality, creator_name, summary } =
+      spotData;
 
     const { rows } = await pg.query(
       `
@@ -105,12 +106,13 @@ export class SpotService {
         longitude,
         submitted_by,
         wifi_quality,
-        creator_name
+        creator_name,
+        summary
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING id
     `,
-      [name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality, creator_name],
+      [name, country, image_link, has_coworking, has_coliving, latitude, longitude, submitted_by, wifi_quality, creator_name, summary],
     );
 
     // Fetch the newly created spot with all the joined data

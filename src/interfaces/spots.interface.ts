@@ -18,6 +18,7 @@ export interface Spot {
   creator_name: string;
   like_user_ids: number[];
   total_likes: number;
+  summary: string;
 }
 
 export interface SpotLike {
@@ -38,4 +39,5 @@ export interface CreateSpotData {
   submitted_by: string | number;
   wifi_quality: number;
   creator_name: string;
+  summary: string;
 }
