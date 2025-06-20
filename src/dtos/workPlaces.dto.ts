@@ -34,7 +34,12 @@ export class CreateWorkPlaceDto {
   public longitude: number;
 
   @IsNumber()
+  @IsOptional()
   public rating: number;
+
+  @IsString()
+  @IsOptional()
+  public comment: string;
 }
 
 export class CreateWorkPlaceRatingDto {
@@ -43,4 +48,8 @@ export class CreateWorkPlaceRatingDto {
   @Max(5)
   @IsNotEmpty()
   public rating: number;
+
+  @IsString()
+  @IsOptional()
+  public comment: string;
 }

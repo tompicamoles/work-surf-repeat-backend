@@ -9,16 +9,19 @@ export interface WorkPlaceInterface {
   image_link: string;
   latitude: number;
   longitude: number;
-  created_at: Date;
-  updated_at: Date;
-  rating: number | null;
+  created_at?: Date;
+  updated_at?: Date;
+  total_ratings: number;
+  average_rating: number;
+  ratings: WorkPlaceRatingInterface[] | [];
 }
 
 export interface WorkPlaceRatingInterface {
-  id: string;
   work_place_id: string;
   user_id: string;
   rating: number;
+  comment?: string;
+  created_at: string;
 }
 
 export interface CreateWorkPlaceData {

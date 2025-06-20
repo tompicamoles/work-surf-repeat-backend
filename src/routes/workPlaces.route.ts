@@ -15,22 +15,17 @@ export class WorkPlacesRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.workPlace.getWorkPlaces);
-    this.router.get(`${this.path}/:id(\\d+)`, this.workPlace.getWorkPlaceById);
+    this.router.get(`${this.path}/:id`, this.workPlace.getWorkPlaceById);
     this.router.post(`${this.path}`, AuthMiddleware, ValidationMiddleware(CreateWorkPlaceDto), this.workPlace.createWorkPlace);
-    this.router.delete(`${this.path}/:id(\\d+)`, this.workPlace.deleteWorkPlace);
-    this.router.get(`${this.path}/:id(\\d+)/ratings`, this.workPlace.getWorkPlaceRatings);
+    this.router.delete(`${this.path}/:id`, this.workPlace.deleteWorkPlace);
+    this.router.get(`${this.path}/:id/ratings`, this.workPlace.getWorkPlaceRatings);
     this.router.post(
-      `${this.path}/:id(\\d+)/ratings`,
+      `${this.path}/:id/ratings`,
       ValidationMiddleware(CreateWorkPlaceRatingDto),
       AuthMiddleware,
       this.workPlace.createWorkPlaceRating,
     );
-    this.router.put(
-      `${this.path}/:id(\\d+)/ratings`,
-      ValidationMiddleware(CreateWorkPlaceRatingDto),
-      AuthMiddleware,
-      this.workPlace.updateWorkPlaceRating,
-    );
-    this.router.delete(`${this.path}/:id(\\d+)/ratings`, this.workPlace.deleteWorkPlaceRating);
+    this.router.put(`${this.path}/:id/ratings`, ValidationMiddleware(CreateWorkPlaceRatingDto), AuthMiddleware, this.workPlace.updateWorkPlaceRating);
+    this.router.delete(`${this.path}/:id/ratings`, this.workPlace.deleteWorkPlaceRating);
   }
 }

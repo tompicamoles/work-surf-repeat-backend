@@ -42,19 +42,33 @@ export class WorkPlacesService {
       `
       SELECT 
         work_places.*,
-        ROUND(AVG(ratings.rating)::numeric, 1) as rating
+        ROUND(AVG(ratings.rating)::numeric, 1) as average_rating,
+        COUNT(ratings.rating) as total_ratings,
+        CASE 
+          WHEN COUNT(ratings.rating) > 0 
+          THEN JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'user_id', ratings.user_id,
+              'rating', ratings.rating,
+              'comment', ratings.comment,
+              'created_at', ratings.created_at
+            )
+          )
+          ELSE '[]'::json
+        END as ratings
       FROM 
         work_places
       LEFT JOIN 
         ratings ON work_places.id = ratings.work_place_id
       WHERE work_places.spot_id = $1
-      GROUP BY work_places.id`,
+      GROUP BY work_places.id
+      ORDER BY work_places.name`,
       [spotId],
     );
     return rows;
   }
 
-  public async createWorkPlace(workPlaceData: CreateWorkPlaceData): Promise<WorkPlaceInterface> {
+  public async createWorkPlace(workPlaceData: CreateWorkPlaceData): Promise<Partial<WorkPlaceInterface>> {
     const { rows } = await pg.query(
       `INSERT INTO work_places 
       (id, name, type, spot_id, submitted_by, creator_name, adress, image_link, latitude, longitude)
@@ -89,12 +103,17 @@ export class WorkPlacesService {
     return rows;
   }
 
-  public async createWorkPlaceRating(workPlaceId: string, userId: number, rating: number): Promise<WorkPlaceRatingInterface> {
-    const { rows } = await pg.query('INSERT INTO ratings (work_place_id, user_id, rating) VALUES ($1, $2, $3) RETURNING *', [
-      workPlaceId,
-      userId,
-      rating,
-    ]);
+  public async createWorkPlaceRating(
+    workPlaceId: string,
+    userId: number,
+    rating: number,
+    comment: string,
+    createdAt: string,
+  ): Promise<WorkPlaceRatingInterface> {
+    const { rows } = await pg.query(
+      'INSERT INTO ratings (work_place_id, user_id, rating, comment, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [workPlaceId, userId, rating, comment, createdAt],
+    );
     return rows[0];
   }
 
