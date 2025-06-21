@@ -53,3 +53,15 @@ export class CreateWorkPlaceRatingDto {
   @IsOptional()
   public comment: string;
 }
+
+export class UpdateWorkPlaceRatingDto {
+  @IsNumber()
+  @Min(1)
+  @Max(5)
+  @IsNotEmpty()
+  public rating: number;
+
+  @IsString()
+  @IsOptional()
+  public comment: string;
+}

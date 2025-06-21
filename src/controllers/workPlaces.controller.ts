@@ -120,13 +120,15 @@ export class WorkPlacesController {
     }
   };
 
-  public updateWorkPlaceRating = async (req: Request, res: Response, next: NextFunction) => {
+  public updateWorkPlaceRating = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const workPlaceId = Number(req.params.id);
-      const workPlaceRatingId = Number(req.params.ratingId);
-      const workPlaceRatingData: CreateWorkPlaceRatingDto = req.body;
-      const updateWorkPlaceRatingData = await this.workPlaceService.updateWorkPlaceRating(workPlaceId, workPlaceRatingId, workPlaceRatingData);
-      res.status(200).json({ data: updateWorkPlaceRatingData, message: 'updated' });
+      const workPlaceId: string = req.params.id;
+      const rating: number = req.body.rating;
+      const comment: string = req.body.comment;
+      const userId: number = req.user.id;
+      const createdAt: string = new Date().toISOString();
+      const updateWorkPlaceRatingData = await this.workPlaceService.updateWorkPlaceRating(workPlaceId, userId, rating, comment, createdAt);
+      res.status(200).json({ ...updateWorkPlaceRatingData });
     } catch (error) {
       next(error);
     }

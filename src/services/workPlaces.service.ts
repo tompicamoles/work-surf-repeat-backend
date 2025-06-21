@@ -118,15 +118,16 @@ export class WorkPlacesService {
   }
 
   public async updateWorkPlaceRating(
-    workPlaceId: number,
+    workPlaceId: string,
     userId: number,
-    workPlaceRatingData: CreateWorkPlaceRatingDto,
+    rating: number,
+    comment: string,
+    createdAt: string,
   ): Promise<WorkPlaceRatingInterface> {
-    const { rows } = await pg.query('UPDATE ratings SET rating = $1 WHERE work_place_id = $2 AND user_id = $3 RETURNING *', [
-      workPlaceRatingData.rating,
-      workPlaceId,
-      userId,
-    ]);
+    const { rows } = await pg.query(
+      'UPDATE ratings SET rating = $1, comment = $2, created_at = $3 WHERE work_place_id = $4 AND user_id = $5 RETURNING *',
+      [rating, comment, createdAt, workPlaceId, userId],
+    );
     return rows[0];
   }
 
