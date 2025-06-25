@@ -35,6 +35,3 @@ export async function geminiSummaryGenerator(spotName: string, country: string):
   });
   return response.text;
 }
-
-//geminiSummaryGenerator('Lorient', 'France');
-geminiSpotModerator('Lorient', 'France');
