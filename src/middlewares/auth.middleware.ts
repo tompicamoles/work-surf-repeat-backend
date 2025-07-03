@@ -4,6 +4,7 @@ import { SUPABASE_JWT_SECRET } from '@config';
 import pg from '@database';
 import { HttpException } from '@exceptions/httpException';
 import { RequestWithUser } from '@interfaces/auth.interface';
+import { User } from '@interfaces/users.interface';
 
 const getAuthorization = req => {
   const cookie = req.cookies['Authorization'];
@@ -33,10 +34,12 @@ export const AuthMiddleware = async (req: RequestWithUser, _res: Response, next:
       try {
         // Add more detailed error handling for verification
         const decoded = verify(Authorization, SUPABASE_JWT_SECRET) as any;
+        const user: User = {
+          id: decoded.sub,
+          email: decoded.email,
+          nickname: decoded.user_metadata.full_name || 'Anonymous',
+        };
 
-        const userId = decoded.sub;
-
-        // Fix the SQL query - remove quotes around column name
         const { rows, rowCount } = await pg.query(
           `
           SELECT
@@ -46,11 +49,11 @@ export const AuthMiddleware = async (req: RequestWithUser, _res: Response, next:
           WHERE
             id = $1
           `,
-          [userId],
+          [user.id],
         );
 
         if (rowCount > 0) {
-          req.user = { ...rows[0], id: userId };
+          req.user = { ...rows[0], ...user };
           next();
         } else {
           next(new HttpException(401, 'User not found'));

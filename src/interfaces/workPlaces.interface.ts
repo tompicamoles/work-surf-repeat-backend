@@ -22,6 +22,7 @@ export interface WorkPlaceRatingInterface {
   rating: number;
   comment?: string;
   created_at: string;
+  user_nickname: string;
 }
 
 export interface CreateWorkPlaceData {

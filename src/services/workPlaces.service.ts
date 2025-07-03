@@ -51,7 +51,8 @@ export class WorkPlacesService {
               'user_id', ratings.user_id,
               'rating', ratings.rating,
               'comment', ratings.comment,
-              'created_at', ratings.created_at
+              'created_at', ratings.created_at,
+              'user_nickname', ratings.user_nickname
             )
           )
           ELSE '[]'::json
@@ -106,13 +107,14 @@ export class WorkPlacesService {
   public async createWorkPlaceRating(
     workPlaceId: string,
     userId: number,
+    userNickname: string,
     rating: number,
     comment: string,
     createdAt: string,
   ): Promise<WorkPlaceRatingInterface> {
     const { rows } = await pg.query(
-      'INSERT INTO ratings (work_place_id, user_id, rating, comment, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [workPlaceId, userId, rating, comment, createdAt],
+      'INSERT INTO ratings (work_place_id, user_id, user_nickname, rating, comment, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [workPlaceId, userId, userNickname, rating, comment, createdAt],
     );
     return rows[0];
   }
