@@ -5,14 +5,25 @@ import { Spot, SpotLike, CreateSpotData } from '@/interfaces/spots.interface';
 
 @Service()
 export class SpotService {
-  public async findAllSpot(filters?: {
-    lifeCost?: number;
-    country?: string;
-    wifiQuality?: number;
-    hasCoworking?: boolean;
-    hasColiving?: boolean;
-  }): Promise<Spot[]> {
-    let query = `
+  public async findAllSpot(
+    filters?: {
+      lifeCost?: number;
+      country?: string;
+      wifiQuality?: number;
+      hasCoworking?: boolean;
+      hasColiving?: boolean;
+    },
+    pagination?: {
+      page?: number;
+      limit?: number;
+    },
+  ): Promise<{ spots: Spot[]; totalCount: number }> {
+    // Set default pagination values
+    const page = pagination?.page || 1;
+    const limit = pagination?.limit || 12;
+    const offset = (page - 1) * limit;
+
+    let baseQuery = `
       SELECT spots.*,
              countries.name as country_name,
              countries.code as country_code,
@@ -23,6 +34,12 @@ export class SpotService {
              countries.life_cost,
              (SELECT COUNT(*) FROM likes WHERE spot_id = spots.id) as total_likes,
              (SELECT ARRAY_AGG(user_id) FROM likes WHERE spot_id = spots.id) as like_user_ids
+      FROM spots
+      LEFT JOIN countries ON spots.country = countries.name
+    `;
+
+    let countQuery = `
+      SELECT COUNT(*) as total
       FROM spots
       LEFT JOIN countries ON spots.country = countries.name
     `;
@@ -59,12 +76,26 @@ export class SpotService {
       }
 
       if (conditions.length > 0) {
-        query += ` WHERE ${conditions.join(' AND ')}`;
+        const whereClause = ` WHERE ${conditions.join(' AND ')}`;
+        baseQuery += whereClause;
+        countQuery += whereClause;
       }
     }
 
-    const { rows } = await pg.query(query, values);
-    return rows;
+    // Add ORDER BY for consistent pagination results
+    baseQuery += ` ORDER BY spots.id`;
+
+    // Add pagination
+    baseQuery += ` LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+    const paginationValues = [...values, limit, offset];
+
+    // Execute both queries in parallel for better performance
+    const [spotsResult, countResult] = await Promise.all([pg.query(baseQuery, paginationValues), pg.query(countQuery, values)]);
+
+    return {
+      spots: spotsResult.rows,
+      totalCount: parseInt(countResult.rows[0].total),
+    };
   }
 
   public async findSpotById(spotId: number): Promise<Spot> {

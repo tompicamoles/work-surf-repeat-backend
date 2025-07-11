@@ -17,23 +17,45 @@ export class SpotController {
       wifiQuality,
       hasCoworking,
       hasColiving,
+      page,
+      limit,
     }: {
       lifeCost?: string;
       country?: string;
       wifiQuality?: string;
       hasCoworking?: string;
       hasColiving?: string;
+      page?: string;
+      limit?: string;
     } = req.query;
 
     try {
-      const findAllSpotsData: Spot[] = await this.spot.findAllSpot({
-        lifeCost: lifeCost ? parseInt(lifeCost) : undefined,
-        country,
-        wifiQuality: wifiQuality ? parseInt(wifiQuality) : undefined,
-        hasCoworking: hasCoworking === 'true' ? true : undefined,
-        hasColiving: hasColiving === 'true' ? true : undefined,
+      // Parse pagination parameters
+      const pageNumber = page ? parseInt(page) : 1;
+      const limitNumber = limit ? parseInt(limit) : 10;
+
+      const { spots, totalCount } = await this.spot.findAllSpot(
+        {
+          lifeCost: lifeCost ? parseInt(lifeCost) : undefined,
+          country,
+          wifiQuality: wifiQuality ? parseInt(wifiQuality) : undefined,
+          hasCoworking: hasCoworking === 'true' ? true : undefined,
+          hasColiving: hasColiving === 'true' ? true : undefined,
+        },
+        {
+          page: pageNumber,
+          limit: limitNumber,
+        },
+      );
+
+      // Calculate hasMore based on pagination
+      const hasMore = pageNumber * limitNumber < totalCount;
+
+      res.status(200).json({
+        spots,
+        totalCount,
+        hasMore,
       });
-      res.status(200).json(findAllSpotsData);
     } catch (error) {
       next(error);
     }
@@ -51,11 +73,11 @@ export class SpotController {
 
   public createSpot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
-      const { name, id } = req.user;
+      const { nickname, id } = req.user;
       const spotData: CreateSpotData = {
         ...req.body,
         submitted_by: id,
-        creator_name: name,
+        creator_name: nickname,
       };
       const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
 
