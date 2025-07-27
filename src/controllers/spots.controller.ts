@@ -51,11 +51,11 @@ export class SpotController {
 
   public createSpot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
-      const { name, id } = req.user;
+      const { nickname, id } = req.user;
       const spotData: CreateSpotData = {
         ...req.body,
         submitted_by: id,
-        creator_name: name,
+        creator_name: nickname,
       };
       const isARealSurfSpot = await geminiSpotModerator(spotData.name, spotData.country);
 
